@@ -7,7 +7,7 @@
 2. Imports
 3. acquire
 4. prepare_mvp
-5. wrangle_zillow_mvp
+5. wrangle_wines_mvp
 6. split
 7. remove_outliers
 '''
@@ -46,29 +46,18 @@ import env
 
 def acquire():
     '''
-    Obtains the vanilla version of zillow dataframe
+    Obtains the vanilla version of both the red and white wine dataframe
+
+    INPUT:
+    NONE
+
+    OUTPUT:
+    red = pandas dataframe with red wine data
+    white = pandas dataframe with white wine data
     '''
-    query = '''
-            SELECT
-                *
-            FROM 
-                predictions_2017
-                LEFT JOIN properties_2017 USING(parcelid)
-                LEFT JOIN airconditioningtype USING(airconditioningtypeid)
-                LEFT JOIN architecturalstyletype USING(architecturalstyletypeid)
-                LEFT JOIN buildingclasstype USING(buildingclasstypeid)
-                LEFT JOIN heatingorsystemtype USING(heatingorsystemtypeid)
-                LEFT JOIN propertylandusetype USING(propertylandusetypeid)
-                LEFT JOIN storytype USING(storytypeid)
-                LEFT JOIN typeconstructiontype USING(typeconstructiontypeid)
-            WHERE
-                (propertylandusetypeid = 261 OR propertylandusetypeid = 279)
-                AND transactiondate LIKE %s
-    '''
-    params = ('2017%', )
-    url = env.get_db_url('zillow')
-    zillow = pd.read_sql(query, url, params=params)
-    return zillow
+    red = pd.read_csv('https://query.data.world/s/k6viyg23e4usmgc2joiodhf2pvcvao?dws=00000')
+    white = pd.read_csv('https://query.data.world/s/d5jg7efmkn3kq7cmrvvfkx2ww7epq7?dws=00000')
+    return red, white
 
 # =======================================================================================================
 # acquire END
@@ -78,125 +67,48 @@ def acquire():
 
 def prepare_mvp():
     '''
-    Takes in the vanilla zillow dataframe and returns a cleaned version that is ready for exploration
-    and further analysis
-    '''
-    zillow = acquire()
-    zillow = zillow.drop(columns= [
-    'typeconstructiontypeid',
-    'storytypeid',
-    'propertylandusetypeid',
-    'heatingorsystemtypeid',
-    'buildingclasstypeid',
-    'architecturalstyletypeid',
-    'airconditioningtypeid',
-    'parcelid',
-    'logerror',
-    'transactiondate',
-    'id',
-    'basementsqft',
-    'buildingqualitytypeid',
-    'calculatedbathnbr',
-    'decktypeid',
-    'finishedfloor1squarefeet',
-    'finishedsquarefeet12',
-    'finishedsquarefeet13',
-    'finishedsquarefeet15',
-    'finishedsquarefeet50',
-    'finishedsquarefeet6',
-    'fireplacecnt',
-    'bathroomcnt',
-    'garagecarcnt',
-    'garagetotalsqft',
-    'hashottuborspa',
-    'latitude',
-    'longitude',
-    'poolcnt',
-    'poolsizesum',
-    'pooltypeid10',
-    'pooltypeid2',
-    'pooltypeid7',
-    'propertycountylandusecode',
-    'propertyzoningdesc',
-    'rawcensustractandblock',
-    'regionidcity',
-    'regionidcounty',
-    'regionidzip',
-    'regionidneighborhood',
-    'roomcnt',
-    'threequarterbathnbr',
-    'unitcnt',
-    'yardbuildingsqft17',
-    'yardbuildingsqft26',
-    'numberofstories',
-    'fireplaceflag',
-    'structuretaxvaluedollarcnt',
-    'assessmentyear',
-    'landtaxvaluedollarcnt',
-    'taxamount',
-    'taxdelinquencyflag',
-    'taxdelinquencyyear',
-    'censustractandblock',
-    'heatingorsystemdesc',
-    'airconditioningdesc',
-    'architecturalstyledesc',
-    'buildingclassdesc',
-    'storydesc',
-    'typeconstructiondesc',
-    'propertylandusedesc'
-    ])
-    zillow.calculatedfinishedsquarefeet = zillow.calculatedfinishedsquarefeet.fillna(1922.89)
-    zillow.fullbathcnt = zillow.fullbathcnt.fillna(2.0).astype(int)
-    zillow.lotsizesquarefeet = zillow.lotsizesquarefeet.fillna(11339.62)
-    zillow.yearbuilt = zillow.yearbuilt.fillna(1955).astype(int)
-    zillow.taxvaluedollarcnt = zillow.taxvaluedollarcnt.fillna(529688.16)
-    conditions = [
-        zillow.fips == 6037,
-        zillow.fips == 6059,
-        zillow.fips == 6111
-        ]
+    Takes in the vanilla red and white wine dataframes and returns a cleaned version that is ready 
+    for exploration and further analysis
 
-    choices = [
-        'Los Angeles',
-        'Orange',
-        'Ventura'
-        ]
-    zillow.fips = np.select(conditions, choices)
-    zillow.yearbuilt = 2017 - zillow.yearbuilt
-    zillow = zillow.rename(columns={
-    'bedroomcnt' : 'bedrooms',
-    'calculatedfinishedsquarefeet' : 'home_sqft',
-    'fips' : 'county',
-    'fullbathcnt' : 'full_bathrooms',
-    'lotsizesquarefeet' : 'lotsize_sqft',
-    'yearbuilt' : 'home_age',
-    'taxvaluedollarcnt' : 'value'
-    })
-    zillow['home_lot_ratio'] = round(zillow.home_sqft / zillow.lotsize_sqft, 2)
-    dummies = pd.get_dummies(zillow.select_dtypes(include='object'))
-    zillow = pd.concat([zillow, dummies], axis=1)
-    zillow = zillow.drop(columns='county')
-    return zillow
+    INPUT:
+    NONE
+
+    OUTPUT:
+    wines = pandas dataframe with both red and white wine prepped for exploration
+    '''
+    red, white = acquire()
+    white['wine_color'] = 'white'
+    red['wine_color'] = 'red'
+    wines = pd.concat([red, white], axis=0)
+    return wines
 
 # =======================================================================================================
 # prepare_mvp END
-# prepare_mvp TO wrangle_zillow_mvp
-# wrangle_zillow_mvp START
+# prepare_mvp TO wrangle_wines_mvp
+# wrangle_wines_mvp START
 # =======================================================================================================
 
-def wrangle_zillow_mvp():
+def wrangle_wines_mvp():
     '''
-    Function that acquires, prepares, and splits the zillow dataframe for use as well as 
+    Function that acquires, prepares, and splits the wines dataframe for use as well as 
     creating a csv.
+
+    INPUT:
+    NONE
+
+    OUTPUT:
+    .csv = ONLY IF FILE NONEXISTANT
+    wines = pandas dataframe with both red and white wine prepped for exploration
     '''
-    if os.path.exists('zillow.csv'):
-        zillow = pd.read_csv('zillow.csv', index_col=0)
-        train, validate, test = split(zillow)
+    if os.path.exists('wines.csv'):
+        wines = pd.read_csv('wines.csv', index_col=0)
+        train, validate, test = split(wines)
         return train, validate, test
     else:
-        zillow = prepare_mvp()
-        zillow.to_csv('zillow.csv')
-        train, validate, test = split(zillow)
+        red, white = acquire()
+        wines = pd.concat([red, white], axis=0)
+        wines.to_csv('wines.csv')
+        train, validate, test = split(wines)
         return train, validate, test
     
 # =======================================================================================================
