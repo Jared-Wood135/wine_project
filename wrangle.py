@@ -105,8 +105,7 @@ def wrangle_wines_mvp():
         train, validate, test = split(wines)
         return train, validate, test
     else:
-        red, white = acquire()
-        wines = pd.concat([red, white], axis=0)
+        wines = prepare_mvp()
         wines.to_csv('wines.csv')
         train, validate, test = split(wines)
         return train, validate, test
