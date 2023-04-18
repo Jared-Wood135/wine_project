@@ -38,7 +38,7 @@
 <a href='#tableofcontents'>Back to 'Table of Contents'</a>
 <br><br>
 <h5>
-Using the 'zillow' dataset from a SQL database acquire properties that have a transaction date of 2017 and are single family/single family inferred homes in order to best predict the home's value.
+Using a 'red' and 'white' wine dataset from <a href='https://data.world/food/wine-quality'>Data.World Wine Quality Dataset</a>, determine the drivers of wine quality and create a model to best predict a wine's quality.
 </h5>
 <br><br><br>
 
@@ -56,11 +56,11 @@ Using the 'zillow' dataset from a SQL database acquire properties that have a tr
 <br><br>
 <h5>
 <li>Implement Data Science Pipeline</li>
-<li>Acquire 'zillow' Dataset</li>
-<li>Prepare 'zillow' Dataset</li>
-<li>Explore 'zillow' Dataset</li>
-<li>Model 'zillow' Dataset</li>
-<li>Deliver 'zillow' Dataset</li>
+<li>Acquire 'red' and 'white' wine Datasets</li>
+<li>Prepare both Datasets and join them into one</li>
+<li>Explore and evaluate 'wine' Dataset for key driving features and create clusters where necessary</li>
+<li>Model creation based off of key features from exploration</li>
+<li>Deliver key takeaways and findings to audience</li>
 </h5>
 <br><br><br>
 
@@ -80,22 +80,20 @@ Using the 'zillow' dataset from a SQL database acquire properties that have a tr
 Hypothesis:
 </b></h4>
 <h5>
-Given the 'zillow' dataset at hand, I believe that the location of the home, the contents of the home, as well as it's proximity to key features in the area will be a strong determining factor to accurately predict the home's value.
+Given the 'red' and 'white' wine datasets, the location, the pH levels, the overall balance of the wine, and processing of the wines will affect the wine's quality.
 </h5>
 <br>
 <h4><b>
 Questions:
 </b></h4>
 <h5>
-<li>Do values correlate to the location? (State, county, city, neighborhood)</li>
-<li>Do values correlate with the amount of bedrooms and bathrooms</li>
-<li>Do values correlate with the size of the home and it's overall property</li>
-<li>Does the ratio of the home to overall sqft matter</li>
-<li>Does proximity to key features like city center, leisure, stores, etc. matter</li>
-<li>Does the local crime rate matter</li>
-<li>Does the population density matter</li>
-<li>Does proximity to job opportunity density matter</li>
-<li>Does proximity to major roads matter</li>
+<li>What features from this specific dataset can reasonably correlate to wine quality?</li>
+<li>Does the alcohol content affect wine quality?</li>
+<li>Does the acidity content affect wine quality?</li>
+<li>Does the pH affect wine quality</li>
+<li>Does the acidity level affect wine quality</li>
+<li>Does red wines or white wines tend to have a better or lower quality score?</li>
+<li>Is there any obvious signs of clustering when exploring the data?</li>
 </h5>
 <br><br><br>
 
@@ -113,17 +111,21 @@ Questions:
 <a href='#tableofcontents'>Back to 'Table of Contents'</a>
 <br><br>
 
-| Field Name | Data Type | Data Format | Description | Example |
-| ----- | ----- | ----- | ----- | ----- |
-|  | object | str | Defines gender of customer | 'Male' |
-| bedrooms | float | #.# | Defines the number of bedrooms in the home | 3.0 |
-| home_sqft | float | #.# | Defines the total square footage of the home | 2444.0 |
-| full_bathrooms | int | # | Defines the number of full bathrooms in the home | 3 |
-| lotsize_sqft | float | #.# | Defines the total square footage of the lot the home resides on | 10200.0 |
-| home_age | int | # | Defines how old the home is from when it was built to 2017 | 76 |
-| value | float | #.# | TARGET VALUE - Defines the home's value | 689354.0 |
-| home_lot_ratio | float | #.# | Defines the ratio of the home size to the lot size | 0.24 |
-| DUMMY COLS | uint | 0, 1 | Binary (True, False) column for specific column name | 0 |
+| Feature Name | Data Type | Description | Example |
+| ----- | ----- | ----- | ----- |
+| fixed acidity | float | Total amount of tataric acid (Tartness and structure of wine) | 8.4 |
+| volatile acidity | float | Total amount of acetic acid (Aroma and taste of wine) | 0.36 |
+| citric acid | float | Total amount of weak organic acid (Natural preservative) | 0.36 |
+| residual sugar | float | Total amount of sugar left in the wine after fermentation (Sweetness) | 11.1 |
+| chlorides | float | Total amount of salt in wine (Flavor and mouthfeel) | 0.032 |
+| free sulfur dioxide | float | Amount of added preservative to prevent oxidation and microbial spoilage (Aroma and taste) | 21.0 |
+| total sulfur dioxide | float | Total amount of sulfur dioxide in wine (Aroma and taste) | 132.0 |
+| density | float | Weight of wine relative to the volume of water (Indication of wine's body and alcohol content) | 0.99313 |
+| pH | float | Acidity level on a scale of 0 to 14 (Lower is more acidic) | 2.95 |
+| sulphates | float | Amount of sulfur-containing compounds (Aroma and preservation) | 0.39 |
+| alcohol | float | alcohol content of the wine | 13.0 |
+| quality | int | Scale from 0 to 10 of wine quality | 5 |
+
 
 <br><br><br>
 
@@ -140,41 +142,19 @@ Questions:
 </head>
 <a href='#tableofcontents'>Back to 'Table of Contents'</a>
 <br><br>
-<h4><b>Planning</b></h4>
-<li>This good ol’ thingy</li>
+<h4><b>Objective</b></h4>
+<li>Create a classification model to best predict the wine’s quality score</li>
 <br>
-<h4><b>Acquire</b></h4>
-<li>env.file</li>
-<li>SQL query</li>
-<li>acquire.py</li>
-<li>acquire.ipynb</li>
+<h4><b>Methodology</b></h4>
+<li>Data science pipeline</li>
+<li>Explore for key features and relationships</li>
+<li>Create clusters if and when necessary</li>
+<li>Create models to best predict quality</li>
+<li>Deliver takeaways</li>
 <br>
-<h4><b>Prepare</b></h4>
-<li>Remove unwanted cols</li>
-<li>Aggregate cols</li>
-<li>Confirm veracity of cols</li>
-<li>prepare.py</li>
-<li>prepare.ipynb</li>
-<br>
-<h4><b>Explore</b></h4>
-<li>Determine best cols</li>
-<li>Visualize regression lines to target variable</li>
-<li>explore.py</li>
-<li>explore.ipynb</li>
-<br>
-<h4><b>Modeling</b></h4>
-<li>Linear Regression</li>
-<li>LassoLars</li>
-<li>TweedieRegressor</li>
-<li>Polynomial Regression</li>
-<li>Top Model</li>
-<li>modeling.py</li>
-<li>modeling.ipynb</li>
-<br>
-<h4><b>Delivery</b></h4>
-<li>Final notebook (.ipynb)</li>
-<li>final.py</li>
-<li>Readme.md</li>
+<h4><b>Deliverables</b></h4>
+<li>final_report.ipynb</li>
+<li>Slide show (5 minute presentation)</li>
 <br><br><br>
 
 
@@ -192,8 +172,7 @@ Questions:
 <br><br>
 
 1. Clone this repo
-2. Create 'env.py' file that connects to SQL
-3. Run desired .ipynb
+2. Run desired files/operations
 <br><br><br>
 
 
@@ -208,57 +187,15 @@ Questions:
 </head>
 <a href='#tableofcontents'>Back to 'Table of Contents'</a>
 <br><br>
-<h4><b>Key Findings:</b></h4>
+<h4><b>Summary:</b></h4>
 
-- Adds better predictive value to regression model
-    - Number of bedrooms
-    - Total sq. ft. of home
-    - Number of full bathrooms
-    - Total sq. ft. of lot the home is on
-    - The age of the home
-    - The ratio of the home and lot sq. ft.
+- Through exploration and clustering, no one feature directly impacts the wine quality.  Rather, it's the wine's balance of all the features combined that better dictates the quality.
 <br><br>
 <h4><b>Recommendations:</b></h4>
 
-- Increases value
-    - Number of bedrooms
-    - Total sq. ft. of home
-    - Number of full bathrooms
-    - The ratio of the home and lot sq. ft.
-- Decreases value
-    - The age of the home
-<br><br>
-<h4><b>Takeaways:</b></h4>
-
-- Focus for higher value
-    - More bedrooms
-    - More full bathrooms
-    - Larger home
-    - Larger home to lot ratio
+- Better understand how to literally define the 'balance' of a wine's content in order to better predict a wine's quality.
 <br><br>
 <h4><b>Next Steps:</b></h4>
 
-- Location specific
-    - Difference in states
-    - Difference in county
-    - Difference in city
-    - Difference in neighborhood
-- Proximity specific
-    - Density of schools
-    - Density of entertainment/recreation
-    - Density of landmarks/parks
-    - Density of retail
-    - Density of job opportunity
-    - Accessibility
-- Community specific
-    - Density of population
-    - Type of religion
-    - Type of residents (Young, middle, old)
-    - Type of family structures
-    - Ethnic distribution
-    - Gender distribution
-- Hazard specific
-    - Natural disaster risk (Tornado, flood, hurricane, etc.)
-    - Crime rate density
-    - Type of crime
+- Conduct further exploration, feature engineering, and clustering methods in order to better define 'balance' for the machine to understand so that the machine will have a more accurate predictor of higher quality wines.
 <br><br>
